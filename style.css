@@ -213,3 +213,9 @@ footer { padding-bottom: 32px; }
 .mapa-tabela tbody tr { cursor: pointer; }
 .mapa-tabela tbody tr:hover, .mapa-tabela tbody tr:focus-visible { background: var(--plano); outline: none; }
 .mapa-legenda i.sem-votos { background: repeating-linear-gradient(45deg, var(--grade) 0 3px, var(--base) 3px 5px); }
+
+/* pessoas acompanhando agora */
+.status.online { color: var(--tinta); font-weight: 600; }
+.status.online .ponto { background: var(--vivo); }
+.status.online.pulsa .ponto { animation: pulso 1s 1; }
+.status[hidden] { display: none; }
