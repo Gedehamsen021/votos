@@ -1,11 +1,15 @@
 # Votos 2026 — resultados ao vivo
 
-Site estático que mostra a apuração da eleição presidencial de 2026 (1º turno, eleição TSE `6257`, cargo `1`)
-e atualiza automaticamente a cada **5 segundos**, usando o JSON público do TSE:
+Site estático que mostra a apuração da eleição presidencial de 2026 e atualiza automaticamente a cada
+**5 segundos**, usando os arquivos JSON públicos do TSE (formato 2026, "resultado unificado" EA20):
 
 ```
-https://resultados.tse.jus.br/oficial/ele2026/6257/dados-simplificados/br/br-c0001-e006257-r.json
+https://resultados.tse.jus.br/oficial/comum/config/ele-c.json                          ← configuração (EA11)
+https://resultados.tse.jus.br/oficial/ele2026/6257/dados/br/br-c0001-e006257-u.json    ← resultado (EA20)
 ```
+
+O código da eleição e as pastas são lidos da configuração do TSE. Sem `?e=`, o site usa a eleição presidencial
+mais recente que já aconteceu, então passa sozinho para o 2º turno (código `6258`) no dia dele.
 
 ## Rodar
 
@@ -20,9 +24,8 @@ Também dá para abrir o `index.html` direto ou publicar em GitHub Pages; nesse 
 Recursos: destaques (líder, vantagem, % apurado), barra dos votos válidos com a marca de 50%, lista de candidatos,
 gráfico da evolução da apuração (Chart.js) e composição do eleitorado. Tema claro/escuro automático.
 
-Se o arquivo não for encontrado, o site tenta descobrir o código certo pelos arquivos de configuração do TSE e mostra
-os endereços que tentou. Parâmetros na URL:
+Se o arquivo não for encontrado, o site mostra os endereços que tentou. Parâmetros na URL:
 
 - `?uf=sp` – estado (`br` = Brasil, `zz` = exterior)
-- `?e=6257` – código da eleição · `?ciclo=ele2026` – pasta do ciclo
+- `?e=6257` – força o código da eleição (`6258` = 2º turno)
 - `?arquivo=<url>` – usa diretamente a URL completa de um JSON do TSE

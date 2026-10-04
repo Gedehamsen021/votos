@@ -78,7 +78,9 @@ main { display: grid; gap: 16px; padding-bottom: 24px; }
 .cand { display: grid; grid-template-columns: 26px 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px; border-radius: 12px; transition: background .3s; }
 .cand:hover { background: var(--plano); }
 .cand .pos { font-weight: 700; color: var(--mudo); text-align: center; font-variant-numeric: tabular-nums; }
-.cand img, .cand .avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--grade); border: 2px solid var(--cor); }
+.cand .foto { position: relative; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: var(--grade); border: 2px solid var(--cor); display: grid; place-items: center; }
+.cand .foto span { font-size: .8rem; font-weight: 700; color: var(--tinta2); }
+.cand .foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .cand .nome { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cand .meta { color: var(--tinta2); font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cand .barra { height: 6px; background: var(--grade); border-radius: 99px; margin-top: 5px; overflow: hidden; }
@@ -115,3 +117,15 @@ footer { padding-bottom: 32px; }
 :root { --n1: #8a8984; --n2: #b5b3ab; --n3: #d9d8d2; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --n1: #a3a29b; --n2: #6b6a64; --n3: #45443f; } }
 :root[data-theme="dark"] { --n1: #a3a29b; --n2: #6b6a64; --n3: #45443f; }
+
+.ao-vivo.final { color: var(--tinta2); }
+.ao-vivo.final i { background: var(--ok); animation: none; }
+#eleicao-nome:not(:empty)::before { content: "· "; }
+.aviso { margin: 0; padding: 12px 16px; border-radius: 12px; background: var(--sup); border: 1px dashed var(--base); color: var(--tinta2); }
+
+@media (max-width: 560px) {
+  .cand { grid-template-columns: 22px 38px minmax(0, 1fr) auto; gap: 8px; padding: 8px 4px; }
+  .cand .foto { width: 38px; height: 38px; }
+  .cand .nome, .cand .meta { white-space: normal; }
+  .grande { font-size: 2rem; }
+}

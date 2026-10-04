@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apuração 2026 ao vivo</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=5">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
 <body>
   <header class="topo">
     <div class="marca">
-      <span class="ao-vivo"><i></i>AO VIVO</span>
-      <h1>Eleições 2026 · Presidente</h1>
-      <p class="sub">Dados oficiais do TSE, atualizados a cada 5 segundos</p>
+      <span class="ao-vivo" id="selo"><i></i><span id="selo-txt">AO VIVO</span></span>
+      <h1>Eleições 2026 · <span id="cargo">Presidente</span></h1>
+      <p class="sub">Dados oficiais do TSE, atualizados a cada 5 segundos <span id="eleicao-nome" class="muted"></span></p>
     </div>
     <div class="controles">
       <select id="uf" aria-label="Abrangência"></select>
@@ -22,12 +22,14 @@
 
   <main>
     <section id="diagnostico" class="card erro" hidden></section>
+    <p id="aviso" class="aviso" hidden></p>
     <!-- Destaques -->
     <section class="herois">
       <div class="heroi heroi-lider">
         <span class="rot">Liderando</span>
         <strong id="lider-nome">–</strong>
         <span id="lider-pct" class="grande">–</span>
+        <span id="lider-extra" class="muted"></span>
       </div>
       <div class="heroi">
         <span class="rot">Vantagem sobre o 2º</span>
@@ -66,7 +68,7 @@
           <span class="muted pequeno">% dos válidos × % das seções</span>
         </div>
         <div class="grafico"><canvas id="evolucao" aria-label="Evolução do percentual de cada candidato conforme a apuração avança"></canvas></div>
-        <p class="muted pequeno" id="evolucao-nota">O histórico é registrado enquanto esta página fica aberta.</p>
+        <p class="muted pequeno" id="evolucao-nota"><span id="evolucao-vazio">O gráfico começa a aparecer quando chegarem os primeiros votos. </span>O histórico é registrado enquanto esta página fica aberta.</p>
       </section>
     </div>
 
@@ -89,6 +91,6 @@
     Fonte: <a id="fonte" target="_blank" rel="noopener">resultados.tse.jus.br</a> · Site não oficial.
   </footer>
 
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=5" defer></script>
 </body>
 </html>
