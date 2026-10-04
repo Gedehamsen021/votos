@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eleições 2026 · Resultados ao vivo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Eleições 2026 — Presidente</h1>
+      <p class="sub">Dados oficiais do TSE · atualização automática a cada 5 s</p>
+    </div>
+    <div class="controls">
+      <label>Abrangência
+        <select id="uf"></select>
+      </label>
+      <span id="status" class="status">carregando…</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="progress-card">
+      <div class="progress-head">
+        <strong id="pct-secoes">–</strong> das seções totalizadas
+        <span id="secoes" class="muted"></span>
+      </div>
+      <div class="bar"><div id="bar-fill" class="bar-fill"></div></div>
+      <div class="muted small">Última totalização do TSE: <span id="hora-tse">–</span></div>
+    </section>
+
+    <section id="candidatos" class="candidatos"></section>
+
+    <section class="resumo">
+      <div class="tile"><span>Votos válidos</span><strong id="vv">–</strong></div>
+      <div class="tile"><span>Brancos</span><strong id="vb">–</strong></div>
+      <div class="tile"><span>Nulos</span><strong id="vn">–</strong></div>
+      <div class="tile"><span>Comparecimento</span><strong id="comp">–</strong></div>
+      <div class="tile"><span>Abstenção</span><strong id="abs">–</strong></div>
+    </section>
+  </main>
+
+  <footer class="muted small">
+    Fonte: <a id="fonte" href="https://resultados.tse.jus.br/oficial/app/index.html#/eleicao/6257/uf/br/cargo/1/vis/nominal/resultados" target="_blank" rel="noopener">resultados.tse.jus.br</a>
+    · Site não oficial.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
