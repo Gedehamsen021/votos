@@ -130,7 +130,7 @@ function normalizar(j) {
       cands.push({
         id: String(c.sqcand || c.n), sqcand: c.sqcand, n: c.n, nome: c.nmu || c.nm, seq: num(c.seq),
         partido: p.sg || "", coligacao: g.tp === "c" ? g.nm : "",
-        vice: vice ? `${vice.nmu || vice.nm}${vice.sgp ? ` (${vice.sgp})` : ""}` : "",
+        vice: vice ? `${vice.nmu || vice.nm}${vice.sgp ? ` (${vice.sgp})` : ""}` : "", viceNome: vice ? vice.nmu || vice.nm : "",
         votos: num(c.vap), pct: c.pvap != null ? num(c.pvap) : null, eleito: c.e === "s", situacao: c.st || "",
       });
     }
@@ -279,6 +279,7 @@ function render(d) {
     salvarHist(hist);
   }
   desenharGrafico(hist, destaque);
+  document.dispatchEvent(new CustomEvent("dados", { detail: d }));  // usado por compartilhar.js
 }
 
 function desenharGrafico(hist, destaque) {

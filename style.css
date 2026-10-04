@@ -129,3 +129,26 @@ footer { padding-bottom: 32px; }
   .cand .nome, .cand .meta { white-space: normal; }
   .grande { font-size: 2rem; }
 }
+
+/* botões e painel de compartilhar */
+.botao { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--borda); background: var(--sup); color: var(--tinta); font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; }
+.botao:hover:not(:disabled) { background: var(--plano); }
+.botao:disabled { opacity: .5; cursor: default; }
+.botao.primario { background: var(--tinta); color: var(--sup); border-color: transparent; }
+.botao.primario:hover:not(:disabled) { background: var(--tinta); opacity: .85; }
+.botao[hidden] { display: none; }
+.dlg { padding: 0; border: 1px solid var(--borda); border-radius: 18px; background: var(--sup); color: var(--tinta); width: min(760px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow: auto; }
+.dlg::backdrop { background: rgba(0, 0, 0, .6); }
+.dlg-corpo { padding: 18px; display: grid; gap: 12px; }
+.dlg-cab { display: flex; justify-content: space-between; align-items: center; }
+.fechar { border: 0; background: transparent; color: var(--tinta2); font-size: 1.1rem; cursor: pointer; padding: 4px 9px; border-radius: 8px; }
+.fechar:hover { background: var(--plano); }
+.cartao-moldura { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #0d0d0d; border: 1px solid var(--borda); }
+.cartao-moldura img { display: block; width: 100%; height: 100%; }
+.cartao-status { position: absolute; inset: 0; display: grid; place-items: center; color: #c3c2b7; font-size: .9rem; }
+.cartao-status:empty { display: none; }
+.post-cab { display: flex; justify-content: space-between; align-items: baseline; font-size: .85rem; font-weight: 600; }
+#post-texto { width: 100%; resize: vertical; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--borda); background: var(--plano); color: var(--tinta); font: inherit; font-size: .9rem; line-height: 1.45; }
+#post-conta.estourou { color: var(--vivo); font-weight: 700; }
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.dica { margin: 0; min-height: 1.3em; }

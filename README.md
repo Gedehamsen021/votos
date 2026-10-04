@@ -24,6 +24,11 @@ Também dá para abrir o `index.html` direto ou publicar em GitHub Pages; nesse 
 Recursos: destaques (líder, vantagem, % apurado), barra dos votos válidos com a marca de 50%, lista de candidatos,
 gráfico da evolução da apuração (Chart.js) e composição do eleitorado. Tema claro/escuro automático.
 
+**Compartilhar:** o botão no topo gera uma imagem 1200×675 (formato do X) com o resultado do momento, um texto
+pronto para o post (contando os 280 caracteres) e botões para postar no X, copiar ou baixar a imagem. Como o link
+de post do X só aceita texto, no celular o botão usa o compartilhamento do sistema (imagem + texto juntos) e no
+computador a imagem é copiada para você colar no post com Ctrl+V.
+
 Se o arquivo não for encontrado, o site mostra os endereços que tentou. Parâmetros na URL:
 
 - `?uf=sp` – estado (`br` = Brasil, `zz` = exterior)

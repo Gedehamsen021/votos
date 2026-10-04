@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apuração 2026 ao vivo</title>
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=7">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
 <body>
@@ -16,6 +16,10 @@
     </div>
     <div class="controles">
       <select id="uf" aria-label="Abrangência"></select>
+      <button id="btn-compartilhar" class="botao" type="button" disabled>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Compartilhar
+      </button>
       <div class="status" id="status"><span class="ponto"></span><span id="status-txt">carregando…</span></div>
     </div>
   </header>
@@ -91,6 +95,32 @@
     Fonte: <a id="fonte" target="_blank" rel="noopener">resultados.tse.jus.br</a> · Site não oficial.
   </footer>
 
-  <script src="app.js?v=6" defer></script>
+  <dialog id="dlg-compartilhar" class="dlg" aria-labelledby="dlg-titulo">
+    <div class="dlg-corpo">
+      <div class="dlg-cab">
+        <h2 id="dlg-titulo">Compartilhar resultado</h2>
+        <button type="button" id="dlg-fechar" class="fechar" aria-label="Fechar">✕</button>
+      </div>
+      <div class="cartao-moldura">
+        <img id="cartao-img" alt="Imagem com o resultado atual da apuração" hidden>
+        <span id="cartao-status" class="cartao-status">Gerando imagem…</span>
+      </div>
+      <div class="post-cab"><label for="post-texto">Texto do post</label><span id="post-conta" class="muted pequeno">0/280</span></div>
+      <textarea id="post-texto" rows="8" spellcheck="false"></textarea>
+      <div class="acoes">
+        <button type="button" id="btn-x" class="botao primario" disabled>
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Postar no X
+        </button>
+        <button type="button" id="btn-copiar" class="botao" disabled>Copiar imagem</button>
+        <button type="button" id="btn-baixar" class="botao" disabled>Baixar imagem</button>
+        <button type="button" id="btn-mais" class="botao" disabled hidden>Mais opções…</button>
+      </div>
+      <p id="dica" class="dica muted pequeno" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <script src="app.js?v=7" defer></script>
+  <script src="compartilhar.js?v=7" defer></script>
 </body>
 </html>
