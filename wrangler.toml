@@ -14,3 +14,8 @@ class_name = "Sala"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Sala"]
+
+# Registros (aba Observability no painel), com amostragem para caber na cota grátis.
+[observability]
+enabled = true
+head_sampling_rate = 0.2
