@@ -1,18 +1,30 @@
-// Contador de pessoas com o site aberto agora. Conecta no Worker da Cloudflare (pasta contador/), cujo endereço
-// o workflow .github/workflows/contador.yml grava em contador.json. Sem esse arquivo, o contador fica escondido.
+// Contador de pessoas com o site aberto agora. Conecta no Worker da Cloudflare (wrangler.toml + contador/), cujo
+// endereço fica em contador.json. Sem esse arquivo, o contador fica escondido.
 // Para testar outro endereço: ?contador=<url do Worker>.
 (() => {
   const selo = $("online");
-  let tentativas = 0;
+  let tentativas = 0, atual = null, animacao = 0, sumir = 0;
 
+  // anima o número do valor anterior até o novo
   function mostrar(n) {
-    const texto = `${fmtInt.format(n)} ${n === 1 ? "pessoa acompanhando" : "pessoas acompanhando"}`;
+    clearTimeout(sumir);
     selo.hidden = false;
-    if ($("online-txt").textContent === texto) return;
-    $("online-txt").textContent = texto;
-    selo.classList.remove("pulsa");
+    selo.classList.remove("velho");
+    $("online-rot").textContent = n === 1 ? "pessoa acompanhando agora" : "pessoas acompanhando agora";
+    if (atual === n) return;
+    const de = atual ?? n, inicio = performance.now(), duracao = 700;
+    atual = n;
+    cancelAnimationFrame(animacao);
+    const passo = (t) => {
+      const k = Math.min(1, (t - inicio) / duracao), suave = 1 - (1 - k) ** 3;
+      $("online-num").textContent = fmtInt.format(Math.round(de + (n - de) * suave));
+      if (k < 1) animacao = requestAnimationFrame(passo);
+    };
+    $("online-num").textContent = fmtInt.format(de);
+    animacao = requestAnimationFrame(passo);
+    selo.classList.remove("mudou");
     void selo.offsetWidth;   // reinicia a animação
-    selo.classList.add("pulsa");
+    selo.classList.add("mudou");
   }
 
   function conectar(base) {
@@ -24,7 +36,10 @@
       } catch { /* mensagem inesperada */ }
     };
     ws.onclose = () => {
-      selo.hidden = true;   // sem conexão, não mostra número velho
+      // numa queda rápida, o número fica apagado; se não voltar em 20 s, some
+      selo.classList.add("velho");
+      clearTimeout(sumir);
+      sumir = setTimeout(() => { selo.hidden = true; }, 20000);
       setTimeout(() => conectar(base), Math.min(60000, 2000 * 2 ** Math.min(tentativas++, 5)));
     };
   }

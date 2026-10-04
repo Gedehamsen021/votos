@@ -215,7 +215,16 @@ footer { padding-bottom: 32px; }
 .mapa-legenda i.sem-votos { background: repeating-linear-gradient(45deg, var(--grade) 0 3px, var(--base) 3px 5px); }
 
 /* pessoas acompanhando agora */
-.status.online { color: var(--tinta); font-weight: 600; }
-.status.online .ponto { background: var(--vivo); }
-.status.online.pulsa .ponto { animation: pulso 1s 1; }
+.online { margin-top: 14px; display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px 10px 14px; border-radius: 999px;
+  background: color-mix(in srgb, var(--vivo) 11%, var(--sup)); border: 1px solid color-mix(in srgb, var(--vivo) 45%, transparent);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--vivo) 20%, transparent); transition: opacity .4s; }
+@media (max-width: 700px) { .online { display: flex; justify-content: center; } }
+.online-ponto { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--vivo); animation: pulso 1.6s infinite; }
+#online-num { font-size: 1.6rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; display: inline-block; }
+#online-rot { font-size: .9rem; font-weight: 600; color: var(--tinta2); }
+.online.mudou #online-num { animation: estalo .55s ease; }
+@keyframes estalo { 0% { transform: scale(1); } 35% { transform: scale(1.2); color: var(--vivo); } 100% { transform: scale(1); } }
+.online.velho { opacity: .5; }
+.online.velho .online-ponto { animation: none; background: var(--mudo); }
 .status[hidden] { display: none; }
+.online[hidden] { display: none; }
