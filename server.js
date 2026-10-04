@@ -13,7 +13,7 @@ http.createServer((req, res) => {
 
   if (url.pathname.startsWith("/tse/oficial/")) {
     const alvo = "https://resultados.tse.jus.br" + url.pathname.slice(4);
-    https.get(alvo, { headers: { "User-Agent": "votos-2026" } }, (up) => {
+    https.get(alvo, { headers: { "User-Agent": "Mozilla/5.0 (votos-2026)", "Cache-Control": "no-cache" } }, (up) => {
       res.writeHead(up.statusCode, {
         "Content-Type": up.headers["content-type"] || "application/json",
         "Cache-Control": "no-store",

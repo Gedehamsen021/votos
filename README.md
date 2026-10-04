@@ -17,4 +17,12 @@ node server.js
 O `server.js` (sem dependências) serve os arquivos e faz proxy de `/tse/*` para o TSE, evitando bloqueio de CORS.
 Também dá para abrir o `index.html` direto ou publicar em GitHub Pages; nesse caso o navegador busca o TSE diretamente.
 
-Para outra eleição/turno, altere `ELEICAO` e `CARGO` no topo de `app.js`.
+Recursos: destaques (líder, vantagem, % apurado), barra dos votos válidos com a marca de 50%, lista de candidatos,
+gráfico da evolução da apuração (Chart.js) e composição do eleitorado. Tema claro/escuro automático.
+
+Se o arquivo não for encontrado, o site tenta descobrir o código certo pelos arquivos de configuração do TSE e mostra
+os endereços que tentou. Parâmetros na URL:
+
+- `?uf=sp` – estado (`br` = Brasil, `zz` = exterior)
+- `?e=6257` – código da eleição · `?ciclo=ele2026` – pasta do ciclo
+- `?arquivo=<url>` – usa diretamente a URL completa de um JSON do TSE

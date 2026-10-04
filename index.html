@@ -3,49 +3,92 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Eleições 2026 · Resultados ao vivo</title>
+  <title>Apuração 2026 ao vivo</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>Eleições 2026 — Presidente</h1>
-      <p class="sub">Dados oficiais do TSE · atualização automática a cada 5 s</p>
+  <header class="topo">
+    <div class="marca">
+      <span class="ao-vivo"><i></i>AO VIVO</span>
+      <h1>Eleições 2026 · Presidente</h1>
+      <p class="sub">Dados oficiais do TSE, atualizados a cada 5 segundos</p>
     </div>
-    <div class="controls">
-      <label>Abrangência
-        <select id="uf"></select>
-      </label>
-      <span id="status" class="status">carregando…</span>
+    <div class="controles">
+      <select id="uf" aria-label="Abrangência"></select>
+      <div class="status" id="status"><span class="ponto"></span><span id="status-txt">carregando…</span></div>
     </div>
   </header>
 
   <main>
-    <section class="progress-card">
-      <div class="progress-head">
-        <strong id="pct-secoes">–</strong> das seções totalizadas
-        <span id="secoes" class="muted"></span>
+    <section id="diagnostico" class="card erro" hidden></section>
+    <!-- Destaques -->
+    <section class="herois">
+      <div class="heroi heroi-lider">
+        <span class="rot">Liderando</span>
+        <strong id="lider-nome">–</strong>
+        <span id="lider-pct" class="grande">–</span>
       </div>
-      <div class="bar"><div id="bar-fill" class="bar-fill"></div></div>
-      <div class="muted small">Última totalização do TSE: <span id="hora-tse">–</span></div>
+      <div class="heroi">
+        <span class="rot">Vantagem sobre o 2º</span>
+        <span id="vantagem" class="grande">–</span>
+        <span id="vantagem-votos" class="muted">–</span>
+      </div>
+      <div class="heroi">
+        <span class="rot">Seções apuradas</span>
+        <span id="pct-secoes" class="grande">–</span>
+        <div class="trilho"><div id="trilho-fill"></div></div>
+        <span id="secoes" class="muted">–</span>
+      </div>
     </section>
 
-    <section id="candidatos" class="candidatos"></section>
-
-    <section class="resumo">
-      <div class="tile"><span>Votos válidos</span><strong id="vv">–</strong></div>
-      <div class="tile"><span>Brancos</span><strong id="vb">–</strong></div>
-      <div class="tile"><span>Nulos</span><strong id="vn">–</strong></div>
-      <div class="tile"><span>Comparecimento</span><strong id="comp">–</strong></div>
-      <div class="tile"><span>Abstenção</span><strong id="abs">–</strong></div>
+    <!-- Corrida: barra 100% dos votos válidos -->
+    <section class="card">
+      <div class="card-cab">
+        <h2>Divisão dos votos válidos</h2>
+        <span class="muted pequeno">Linha tracejada = 50% (vence no 1º turno)</span>
+      </div>
+      <div class="corrida" id="corrida"><div class="meta50"></div></div>
+      <div class="legenda" id="legenda-corrida"></div>
     </section>
+
+    <div class="grade">
+      <!-- Candidatos -->
+      <section class="card">
+        <div class="card-cab"><h2>Candidatos</h2><span class="muted pequeno" id="hora-tse"></span></div>
+        <div id="candidatos" class="candidatos"></div>
+      </section>
+
+      <!-- Evolução -->
+      <section class="card">
+        <div class="card-cab">
+          <h2>Evolução da apuração</h2>
+          <span class="muted pequeno">% dos válidos × % das seções</span>
+        </div>
+        <div class="grafico"><canvas id="evolucao" aria-label="Evolução do percentual de cada candidato conforme a apuração avança"></canvas></div>
+        <p class="muted pequeno" id="evolucao-nota">O histórico é registrado enquanto esta página fica aberta.</p>
+      </section>
+    </div>
+
+    <!-- Comparecimento -->
+    <section class="card">
+      <div class="card-cab"><h2>Eleitorado</h2><span class="muted pequeno" id="eleitorado"></span></div>
+      <div class="pilha" id="pilha"></div>
+      <div class="tiles">
+        <div class="tile"><span>Votos válidos</span><strong id="vv">–</strong><em id="pvv"></em></div>
+        <div class="tile"><span>Brancos</span><strong id="vb">–</strong><em id="pvb"></em></div>
+        <div class="tile"><span>Nulos</span><strong id="vn">–</strong><em id="pvn"></em></div>
+        <div class="tile"><span>Comparecimento</span><strong id="comp">–</strong><em id="pcomp"></em></div>
+        <div class="tile"><span>Abstenção</span><strong id="abs">–</strong><em id="pabs"></em></div>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="muted small">
-    Fonte: <a id="fonte" href="https://resultados.tse.jus.br/oficial/app/index.html#/eleicao/6257/uf/br/cargo/1/vis/nominal/resultados" target="_blank" rel="noopener">resultados.tse.jus.br</a>
-    · Site não oficial.
+  <footer class="muted pequeno">
+    Fonte: <a id="fonte" target="_blank" rel="noopener">resultados.tse.jus.br</a> · Site não oficial.
   </footer>
 
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
