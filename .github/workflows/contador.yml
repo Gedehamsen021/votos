@@ -1,12 +1,14 @@
-# Publica o contador de pessoas online (pasta contador/) na Cloudflare e grava o endereço em contador.json,
-# que o site lê. Precisa dos segredos CLOUDFLARE_API_TOKEN e CLOUDFLARE_ACCOUNT_ID (passo a passo no README);
-# sem eles, só avisa e termina. Roda quando o contador muda ou manualmente em Actions > Run workflow.
+# Caminho alternativo para publicar o contador de pessoas online (wrangler.toml + contador/) na Cloudflare
+# e gravar o endereço em contador.json, que o site lê. Precisa dos segredos CLOUDFLARE_API_TOKEN e
+# CLOUDFLARE_ACCOUNT_ID; sem eles, só avisa e termina. Quem conectou o repositório direto na Cloudflare
+# (Workers Builds) não precisa deste workflow. Roda quando o contador muda ou em Actions > Run workflow.
 name: Publicar contador de pessoas online
 
 on:
   push:
     paths:
       - contador/**
+      - wrangler.toml
       - .github/workflows/contador.yml
   workflow_dispatch:
 
@@ -44,7 +46,6 @@ jobs:
 
       - name: Publica o Worker
         if: steps.chaves.outputs.ok == '1'
-        working-directory: contador
         shell: bash   # com pipefail: se o wrangler falhar, o passo falha
         run: npx --yes wrangler@4 deploy 2>&1 | tee "$RUNNER_TEMP/wrangler.txt"
 

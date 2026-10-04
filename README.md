@@ -38,20 +38,19 @@ computador a imagem é copiada para você colar no post com Ctrl+V.
 ## Contador de pessoas acompanhando (opcional)
 
 O selo "N pessoas acompanhando" no topo conta quem está com o site aberto agora. Ele usa um Cloudflare Worker
-(pasta `contador/`) que recebe uma conexão leve de cada aba aberta; o plano grátis da Cloudflare aguenta milhares de
-pessoas ao mesmo tempo (limite de 100 mil conexões por dia). Enquanto não for configurado, o selo fica escondido.
+(`wrangler.toml` + `contador/worker.js`) que recebe uma conexão leve de cada aba aberta; o plano grátis da Cloudflare
+aguenta milhares de pessoas ao mesmo tempo (limite de 100 mil conexões por dia). O site lê o endereço do Worker em
+`contador.json`; sem esse arquivo, o selo fica escondido.
 
-Para ligar (uma vez só, ~10 minutos):
+**Publicação pela integração da Cloudflare com o GitHub (a usada aqui):** em *Workers e Pages → Create → Import a
+repository*, conectar este repositório com o nome **votos** (o mesmo do `wrangler.toml`) e os comandos padrão. A
+cada push na branch principal a Cloudflare publica o Worker. Em *Settings → Build → Branch control*, desligar os builds
+de outras branches (a branch `dados` recebe um commit por minuto do coletor). O endereço fica em
+*Settings → Domains & Routes* (`votos.<subdomínio>.workers.dev`) e vai para `contador.json`.
 
-1. Crie uma conta grátis em <https://dash.cloudflare.com/sign-up>.
-2. No painel da Cloudflare, abra **Workers e Pages** uma vez: isso cria o endereço `*.workers.dev` da sua conta.
-3. Copie o **Account ID** (fica na página inicial da conta, no menu de três pontinhos → *Copy account ID*).
-4. Crie uma chave: ícone do perfil → **My Profile** → **API Tokens** → **Create Token** → modelo
-   **Edit Cloudflare Workers** → *Continue to summary* → *Create Token*, e copie a chave.
-5. No GitHub: repositório → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
-   Crie `CLOUDFLARE_API_TOKEN` (a chave do passo 4) e `CLOUDFLARE_ACCOUNT_ID` (o código do passo 3).
-6. Em **Actions** → **Publicar contador de pessoas online** → **Run workflow**. O workflow publica o Worker e grava o
-   endereço dele em `contador.json`; em alguns minutos o contador aparece no site.
+**Alternativa pelo GitHub Actions:** cadastrar os segredos `CLOUDFLARE_API_TOKEN` (modelo de token *Edit Cloudflare
+Workers*) e `CLOUDFLARE_ACCOUNT_ID` em *Settings → Secrets and variables → Actions* e rodar o workflow
+*Publicar contador de pessoas online*, que publica o Worker e grava o `contador.json` sozinho.
 
 ## Histórico do gráfico (coletor)
 

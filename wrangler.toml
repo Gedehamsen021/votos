@@ -1,0 +1,16 @@
+# Contador de pessoas acompanhando o site (código em contador/worker.js).
+# Publicado pela integração da Cloudflare com o GitHub (Worker "votos", comando padrão `npx wrangler deploy`)
+# ou pelo workflow .github/workflows/contador.yml. O nome precisa ser igual ao do Worker no painel.
+name = "votos"
+main = "contador/worker.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "SALA"
+class_name = "Sala"
+
+# Durable Object com armazenamento SQLite: é o tipo disponível no plano grátis da Cloudflare.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Sala"]
