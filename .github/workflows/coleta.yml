@@ -17,9 +17,11 @@ on:
 permissions:
   contents: write
 
+# Só uma coleta por vez. Uma versão nova do coletor (push) substitui a que está rodando;
+# as execuções agendadas esperam a atual terminar.
 concurrency:
   group: coleta-historico
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   coletar:

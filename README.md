@@ -29,6 +29,22 @@ pronto para o post (contando os 280 caracteres) e botões para postar no X, copi
 de post do X só aceita texto, no celular o botão usa o compartilhamento do sistema (imagem + texto juntos) e no
 computador a imagem é copiada para você colar no post com Ctrl+V.
 
+## Histórico do gráfico (coletor)
+
+O gráfico de evolução não depende de a página estar aberta: o workflow `.github/workflows/coleta.yml` roda
+`coleta/coletar.mjs` no GitHub Actions, que consulta o TSE a cada 20 s (estados e exterior a cada ~1 min) e grava
+um ponto por atualização em `historico/<eleição>/<uf>.json` na branch `dados`. O site carrega esse histórico
+(via raw.githubusercontent.com) e junta com o que o próprio navegador grava.
+
+O coletor começa sozinho quando ele ou o workflow mudam, nos domingos de outubro entre 17h e 1h (horário de
+Brasília) ou manualmente em *Actions → Coletar histórico da apuração → Run workflow*. Ele para na totalização final
+ou depois de ~5h45.
+
+O começo do histórico do 1º turno (de 1,23% a 31,9% das seções, antes de o coletor existir) foi importado de
+`coleta/semente/6257-br.json`, convertido do arquivo público do projeto
+[driano1221/apuracao-presidencial-2026](https://github.com/driano1221/apuracao-presidencial-2026), que também lê os
+arquivos do TSE.
+
 Se o arquivo não for encontrado, o site mostra os endereços que tentou. Parâmetros na URL:
 
 - `?uf=sp` – estado (`br` = Brasil, `zz` = exterior)

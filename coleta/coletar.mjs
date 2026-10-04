@@ -78,12 +78,23 @@ async function main() {
   mkdirSync(pasta, { recursive: true });
   const arquivo = (uf) => join(pasta, `${uf}.json`);
 
-  // retoma o que já foi gravado (o workflow pode ser reiniciado)
+  // retoma o que já foi gravado (o workflow pode ser reiniciado) e junta os pontos de coleta/semente/,
+  // gravados antes deste coletor existir
   const hist = {};
+  const alterados = new Set();
   for (const uf of UFS) {
     try { hist[uf] = JSON.parse(readFileSync(arquivo(uf), "utf8")); } catch { hist[uf] = { eleicao: ctx.cd, uf, final: false, pontos: [] }; }
+    let semente = [];
+    try { semente = JSON.parse(readFileSync(new URL(`./semente/${ctx.cd}-${uf}.json`, import.meta.url), "utf8")).pontos || []; } catch { /* sem semente */ }
+    const porP = new Map(hist[uf].pontos.map((x) => [x.p, x]));
+    const novos = semente.filter((x) => !porP.has(x.p));
+    if (novos.length) {
+      for (const x of novos) porP.set(x.p, x);
+      hist[uf].pontos = [...porP.values()].sort((x, y) => x.t - y.t);
+      alterados.add(uf);
+      log(`${uf}: ${novos.length} ponto(s) importado(s) de coleta/semente/`);
+    }
   }
-  const alterados = new Set();
 
   function registrar(uf, pt) {
     if (!pt) return;
