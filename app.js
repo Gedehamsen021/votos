@@ -70,15 +70,15 @@ const fotoFalhou = new Set(); // não pede de novo uma foto que já deu erro
 const chaveHist = () => `hist-${ctx.ciclo}-${ctx.eleicao}-${uf}`;
 // Um ponto por % de seções apuradas (o registro mais novo vence), em ordem crescente.
 // Isso também conserta históricos gravados antes com pontos repetidos.
-function lerHist() {
+function lerHist(chave = chaveHist()) {
   let h = [];
-  try { h = JSON.parse(localStorage.getItem(chaveHist())) || []; } catch { /* sem storage */ }
+  try { h = JSON.parse(localStorage.getItem(chave)) || []; } catch { /* sem storage */ }
   const porP = new Map();
   for (const x of h) if (x && typeof x.p === "number" && x.v) porP.set(x.p, x);
   return [...porP.values()].sort((a, b) => a.p - b.p);
 }
-function salvarHist(h) {
-  try { localStorage.setItem(chaveHist(), JSON.stringify(h.slice(-2000))); } catch { /* sem storage */ }
+function salvarHist(h, chave = chaveHist()) {
+  try { localStorage.setItem(chave, JSON.stringify(h.slice(-2000))); } catch { /* sem storage */ }
 }
 
 // ---------- busca dos dados ----------
@@ -131,7 +131,7 @@ async function buscar() {
 
 // Converte o JSON do TSE para um formato único. Aceita o arquivo unificado de 2026 e o antigo "dados-simplificados".
 function normalizar(j) {
-  const base = { dg: j.dg, hg: j.hg, idg: j.idg, geradoEm: horaTSE(j.dg, j.hg), final: j.tf === "s", liberado: j.dv !== "n" };
+  const base = { abrangencia: String(j.cdabr || "").toLowerCase(), dg: j.dg, hg: j.hg, idg: j.idg, geradoEm: horaTSE(j.dg, j.hg), final: j.tf === "s", liberado: j.dv !== "n" };
   if (Array.isArray(j.carg)) {
     const cargo = j.carg.find((c) => String(c.cd) === String(CARGO)) || j.carg[0] || {};
     const cands = [];
@@ -340,19 +340,19 @@ function desenharGrafico(hist, destaque) {
   });
 }
 
-// Junta o histórico gravado pelo coletor com o deste navegador (um ponto por % de seções, o mais novo vence).
+// Junta o histórico gravado pelo coletor com o deste navegador. O compartilhado é o registro completo
+// até onde ele vai, então nesse trecho ele substitui o local (o que também apaga pontos gravados errado
+// por versões antigas do site); do navegador ficam só os pontos mais novos que ele ainda não tem.
 async function carregarHistoricoCompartilhado() {
+  const ufPedido = uf, chave = chaveHist();   // o estado pode mudar enquanto o arquivo baixa
   try {
-    const r = await fetch(urlHistorico(uf), { cache: "no-cache" });
+    const r = await fetch(urlHistorico(ufPedido), { cache: "no-cache" });
     if (!r.ok) return;
-    const remoto = (await r.json()).pontos || [];
-    const porP = new Map(lerHist().map((h) => [h.p, h]));
-    for (const x of remoto) {
-      const atual = porP.get(x.p);
-      if (typeof x.p === "number" && x.v && (!atual || (x.t || 0) > (atual.t || 0))) porP.set(x.p, x);
-    }
-    salvarHist([...porP.values()].sort((a, b) => a.p - b.p));
-    if (ultimoDestaque.length) desenharGrafico(lerHist(), ultimoDestaque);
+    const remoto = ((await r.json()).pontos || []).filter((x) => typeof x.p === "number" && x.v);
+    if (!remoto.length) return;
+    const ate = Math.max(...remoto.map((x) => x.p));
+    salvarHist([...remoto, ...lerHist(chave).filter((h) => h.p > ate)].sort((a, b) => a.p - b.p), chave);
+    if (ufPedido === uf && ultimoDestaque.length) desenharGrafico(lerHist(), ultimoDestaque);
   } catch { /* sem histórico compartilhado: segue só com o deste navegador */ }
 }
 
@@ -381,10 +381,16 @@ function setStatus(texto, ok) {
   setTimeout(() => s.classList.remove("pulsa"), 1000);
 }
 
+let consulta = 0;   // número da consulta mais recente
 async function atualizar() {
   clearTimeout(timer);
+  const minha = ++consulta, ufPedido = uf;
   try {
     const d = normalizar(await buscar());
+    // Se o estado mudou enquanto a resposta vinha, ela é de outra consulta: descarta,
+    // senão os números de um estado iam parar no gráfico de outro.
+    if (minha !== consulta || ufPedido !== uf) return;
+    if (d.abrangencia && d.abrangencia !== uf && !qs.get("arquivo")) return;
     // A rede de distribuição do TSE às vezes entrega uma versão anterior do arquivo.
     // Ela é ignorada para os números não "voltarem" na tela nem bagunçarem o gráfico.
     if (!(d.geradoEm && d.geradoEm < ultimaGeracao)) {
@@ -401,11 +407,12 @@ async function atualizar() {
     $("fonte").href = urlApp();
     setStatus(`atualizado às ${new Date().toLocaleTimeString("pt-BR")}`, true);
   } catch (log) {
+    if (minha !== consulta) return;
     if (Array.isArray(log)) mostrarDiagnostico(log);
     else console.error(log);
     setStatus(Array.isArray(log) ? `sem dados (${log[log.length - 1]?.status})` : "erro ao processar dados", false);
   } finally {
-    timer = setTimeout(atualizar, INTERVALO_MS);
+    if (minha === consulta) timer = setTimeout(atualizar, INTERVALO_MS);   // um só ciclo de atualização
   }
 }
 

@@ -320,7 +320,9 @@ async function cicloMapa() {
       const s = fila.shift();
       try {
         const r = await fetch(urlResultado(s), { cache: "no-cache" });
-        if (r.ok) guardar(s, normalizar(await r.json()));
+        if (!r.ok) continue;
+        const d = normalizar(await r.json());
+        if (!d.abrangencia || d.abrangencia === s) guardar(s, d);
       } catch { /* tenta de novo no próximo ciclo */ }
     }
   };
@@ -336,7 +338,8 @@ function iniciarMapa() {
   resumir();
   document.addEventListener("dados", (e) => {
     const d = e.detail;
-    if (uf !== "br") guardar(uf, d);   // o estado aberto (ou o exterior) chega a cada 5 s
+    const s = d.abrangencia || uf;
+    if (s !== "br") guardar(s, d);   // o estado aberto (ou o exterior) chega a cada 5 s
     for (const s of SIGLAS) pintar(s);                                // as cores podem ter sido definidas agora
     destacar("destaque-sel", uf);
     $("mapa-brasil").hidden = uf === "br";
