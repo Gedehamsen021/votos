@@ -228,3 +228,52 @@ footer { padding-bottom: 32px; }
 .online.velho .online-ponto { animation: none; background: var(--mudo); }
 .status[hidden] { display: none; }
 .online[hidden] { display: none; }
+
+/* resultado final */
+.modo-final .herois, .modo-final #card-corrida, .modo-final #aviso { display: none; }
+.painel-final { position: relative; overflow: hidden; padding: 26px; border-radius: 22px; border: 1px solid var(--borda);
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--cor-vencedor, var(--s1)) 22%, var(--sup)) 0%, var(--sup) 62%);
+  box-shadow: var(--sombra); display: grid; gap: 22px; animation: surgir .7s ease; }
+.painel-final[hidden] { display: none; }
+@keyframes surgir { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.final-selo { display: inline-flex; align-items: center; gap: 8px; font-size: .75rem; font-weight: 800; letter-spacing: .1em; color: var(--tinta2); }
+.final-selo i { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); }
+.final-cab h2 { margin: 8px 0 6px; font-size: clamp(1.6rem, 3.6vw, 2.6rem); letter-spacing: -.02em; line-height: 1.1; }
+.final-cab p { margin: 0; }
+.final-grade { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .9fr) minmax(0, .95fr); gap: 28px; align-items: center; }
+@media (max-width: 960px) { .final-grade { grid-template-columns: minmax(0, 1fr); } }
+.final-vencedores { display: grid; gap: 14px; margin-bottom: 18px; }
+.final-vencedor { display: flex; align-items: center; gap: 16px; }
+.final-vencedor > div:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.final-vencedor strong { font-size: 1.35rem; }
+.final-pct { font-size: 2.4rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; }
+.final-foto { position: relative; flex: none; width: var(--tam); height: var(--tam); border-radius: 50%; overflow: hidden;
+  background: var(--grade); box-shadow: 0 0 0 4px var(--cor), 0 10px 26px rgba(0, 0, 0, .18); display: grid; place-items: center; }
+.final-foto span { font-weight: 800; font-size: 1.3rem; color: var(--tinta2); }
+.final-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.final-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.final-lista li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; }
+.final-lista i { width: 12px; height: 12px; border-radius: 4px; background: var(--cor); }
+.final-lista .n { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.final-lista b { font-variant-numeric: tabular-nums; }
+.final-lista .barra { grid-column: 2 / 4; height: 6px; border-radius: 99px; background: var(--grade); overflow: hidden; }
+.final-lista .barra div { height: 100%; background: var(--cor); border-radius: 99px; }
+.final-rosca { position: relative; text-align: center; }
+#rosca { width: 100%; max-width: 300px; display: block; margin: 0 auto; }
+.rosca-fundo { fill: none; stroke: var(--grade); stroke-width: 28; }
+.rosca-arco { fill: none; stroke-width: 28; transition: stroke-dasharray 1.4s cubic-bezier(.2, .8, .2, 1); }
+.rosca-50 { stroke: var(--tinta); stroke-width: 2.5; stroke-dasharray: 4 3; }
+.rosca-centro { position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 1; max-width: 300px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.rosca-centro strong { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -.03em; }
+.rosca-centro span { font-size: .85rem; color: var(--tinta2); max-width: 60%; }
+.final-mapa h3 { margin: 0 0 8px; font-size: .95rem; }
+#minimapa { width: 100%; max-width: 320px; display: block; margin: 0 auto 10px; }
+#minimapa .uf { stroke-width: .8; }
+.final-numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.final-numeros div { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px;
+  background: color-mix(in srgb, var(--plano) 70%, transparent); border: 1px solid var(--borda); }
+.final-numeros span { font-size: .75rem; color: var(--tinta2); }
+.final-numeros strong { font-size: 1.15rem; }
+.final-numeros em { font-style: normal; font-size: .8rem; color: var(--tinta2); }
+.final-acoes { display: flex; flex-wrap: wrap; gap: 10px; }

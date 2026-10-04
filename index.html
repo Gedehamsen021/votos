@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apuração 2026 ao vivo</title>
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=14">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
 <body>
@@ -33,6 +33,37 @@
     <section id="diagnostico" class="card erro" hidden></section>
     <p id="aviso" class="aviso" hidden></p>
     <!-- Destaques -->
+    <!-- Resultado final (aparece com 100% apurado ou totalização final; prévia: ?final=1) -->
+    <section id="final" class="painel-final" hidden>
+      <div class="final-cab">
+        <span class="final-selo"><i></i><span id="final-selo">RESULTADO FINAL</span></span>
+        <h2 id="final-titulo"></h2>
+        <p id="final-sub" class="muted"></p>
+      </div>
+      <div class="final-grade">
+        <div class="final-col">
+          <div id="final-vencedores" class="final-vencedores"></div>
+          <ol id="final-lista" class="final-lista"></ol>
+          <p id="final-outros" class="muted pequeno"></p>
+        </div>
+        <div class="final-rosca">
+          <svg id="rosca" viewBox="0 0 200 200" role="img" aria-label="Divisão dos votos válidos"></svg>
+          <div class="rosca-centro"><strong id="rosca-pct"></strong><span id="rosca-nome"></span></div>
+          <p class="muted pequeno">Votos válidos · traço embaixo = 50%</p>
+        </div>
+        <div class="final-mapa">
+          <h3>Quem venceu em cada estado</h3>
+          <svg id="minimapa" role="group" aria-label="Minimapa do Brasil por estado"></svg>
+          <ul id="minimapa-legenda" class="mapa-legenda"></ul>
+        </div>
+      </div>
+      <div id="final-numeros" class="final-numeros"></div>
+      <div class="final-acoes">
+        <button type="button" id="final-compartilhar" class="botao primario">Compartilhar resultado</button>
+        <button type="button" id="final-detalhes" class="botao">Ver apuração detalhada ↓</button>
+      </div>
+    </section>
+
     <section class="herois">
       <div class="heroi heroi-lider">
         <span class="rot">Liderando</span>
@@ -54,7 +85,7 @@
     </section>
 
     <!-- Corrida: barra 100% dos votos válidos -->
-    <section class="card">
+    <section class="card" id="card-corrida">
       <div class="card-cab">
         <h2>Divisão dos votos válidos</h2>
         <span class="muted pequeno">Linha tracejada = 50% (vence no 1º turno)</span>
@@ -166,5 +197,6 @@
   <script src="mapa-brasil.js?v=8" defer></script>
   <script src="mapa.js?v=9" defer></script>
   <script src="contador.js?v=11" defer></script>
+  <script src="final.js?v=13" defer></script>
 </body>
 </html>

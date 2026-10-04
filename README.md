@@ -24,6 +24,10 @@ Também dá para abrir o `index.html` direto ou publicar em GitHub Pages; nesse 
 Recursos: destaques (líder, vantagem, % apurado), barra dos votos válidos com a marca de 50%, lista de candidatos,
 gráfico da evolução da apuração (Chart.js) e composição do eleitorado. Tema claro/escuro automático.
 
+**Resultado final:** quando a apuração chega a 100% das seções (ou o TSE fecha a totalização), o topo vira um painel
+com o vencedor (ou quem vai ao 2º turno), gráfico de rosca dos votos válidos com a marca de 50%, minimapa de quem venceu
+em cada estado e os números finais. Para ver como fica antes disso: `?final=1` no fim do endereço.
+
 **Mapa por estado:** cada estado aparece com a cor de quem lidera ali (mais forte = vantagem maior), atualizado
 sozinho a cada 30 s. Passando o mouse (ou tocando) aparece o resumo do estado; clicando, o site inteiro passa a
 mostrar aquele estado. Ao lado ficam quantos estados cada candidatura lidera, o resultado por região e o do exterior.
