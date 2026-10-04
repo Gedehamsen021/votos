@@ -42,12 +42,15 @@ const num = (v) => {
 const pct = (v, casas = 2) => `${num(v).toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas })}%`;
 const cssVar = (nome) => getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
 const dataBR = (dt) => { const [d, m, a] = String(dt).split("/"); return `${a}-${m}-${d}`; };
+// Horário em que o TSE gerou o arquivo (dg/hg, horário de Brasília), em milissegundos; 0 se ausente.
+const horaTSE = (dg, hg) => Date.parse(`${dataBR(dg)}T${hg}-03:00`) || 0;
 const hojeBR = () => new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" }); // AAAA-MM-DD
 
 let uf = (qs.get("uf") || "br").toLowerCase();
 if (!UFS.includes(uf)) uf = "br";
 let timer = null;
 let grafico = null;
+let ultimaGeracao = 0;        // horário (TSE) do arquivo mais novo já mostrado
 const ultimoVoto = new Map();
 const SLOTS = ["--s1", "--s2", "--s3", "--s4"];
 const slotDe = new Map();     // id do candidato -> índice da cor (a cor segue o candidato, não a posição)
@@ -55,8 +58,14 @@ const fotoFalhou = new Set(); // não pede de novo uma foto que já deu erro
 
 // ---------- histórico (fica só neste navegador) ----------
 const chaveHist = () => `hist-${ctx.ciclo}-${ctx.eleicao}-${uf}`;
+// Um ponto por % de seções apuradas (o registro mais novo vence), em ordem crescente.
+// Isso também conserta históricos gravados antes com pontos repetidos.
 function lerHist() {
-  try { return JSON.parse(localStorage.getItem(chaveHist())) || []; } catch { return []; }
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem(chaveHist())) || []; } catch { /* sem storage */ }
+  const porP = new Map();
+  for (const x of h) if (x && typeof x.p === "number" && x.v) porP.set(x.p, x);
+  return [...porP.values()].sort((a, b) => a.p - b.p);
 }
 function salvarHist(h) {
   try { localStorage.setItem(chaveHist(), JSON.stringify(h.slice(-500))); } catch { /* sem storage */ }
@@ -112,7 +121,7 @@ async function buscar() {
 
 // Converte o JSON do TSE para um formato único. Aceita o arquivo unificado de 2026 e o antigo "dados-simplificados".
 function normalizar(j) {
-  const base = { dg: j.dg, hg: j.hg, idg: j.idg, final: j.tf === "s", liberado: j.dv !== "n" };
+  const base = { dg: j.dg, hg: j.hg, idg: j.idg, geradoEm: horaTSE(j.dg, j.hg), final: j.tf === "s", liberado: j.dv !== "n" };
   if (Array.isArray(j.carg)) {
     const cargo = j.carg.find((c) => String(c.cd) === String(CARGO)) || j.carg[0] || {};
     const cands = [];
@@ -259,11 +268,14 @@ function render(d) {
 
   // histórico + gráfico
   const hist = lerHist();
-  const ponto = { p: d.pst, v: Object.fromEntries(cands.map((c) => [c.id, c.pct])) };
-  const ult = hist[hist.length - 1];
-  if (comVotos && (!ult || ult.p !== ponto.p || JSON.stringify(ult.v) !== JSON.stringify(ponto.v))) {
-    if (ult && ult.p === ponto.p) hist.pop();
+  const ponto = { p: d.pst, t: d.geradoEm, v: Object.fromEntries(cands.map((c) => [c.id, c.pct])) };
+  const maisNovo = Math.max(0, ...hist.map((h) => h.t || 0));
+  const i = hist.findIndex((h) => h.p === ponto.p);
+  const igual = i >= 0 && JSON.stringify(hist[i].v) === JSON.stringify(ponto.v);
+  if (comVotos && !igual && ponto.t >= maisNovo) {
+    if (i >= 0) hist.splice(i, 1);
     hist.push(ponto);
+    hist.sort((a, b) => a.p - b.p);
     salvarHist(hist);
   }
   desenharGrafico(hist, destaque);
@@ -301,6 +313,7 @@ function desenharGrafico(hist, destaque) {
         legend: { labels: { color: tinta2, usePointStyle: true, pointStyle: "rectRounded", filter: (i) => i.text !== "50%" } },
         tooltip: {
           filter: (i) => i.dataset.label !== "50%",
+          itemSort: (a, b) => b.parsed.y - a.parsed.y,
           callbacks: {
             title: (it) => `${pct(it[0].parsed.x)} das seções`,
             label: (it) => ` ${it.dataset.label}: ${pct(it.parsed.y)}`,
@@ -344,7 +357,12 @@ async function atualizar() {
   clearTimeout(timer);
   try {
     const d = normalizar(await buscar());
-    render(d);
+    // A rede de distribuição do TSE às vezes entrega uma versão anterior do arquivo.
+    // Ela é ignorada para os números não "voltarem" na tela nem bagunçarem o gráfico.
+    if (!(d.geradoEm && d.geradoEm < ultimaGeracao)) {
+      ultimaGeracao = Math.max(ultimaGeracao, d.geradoEm);
+      render(d);
+    }
     mostrarDiagnostico(null);
     $("fonte").href = urlApp();
     setStatus(`atualizado às ${new Date().toLocaleTimeString("pt-BR")}`, true);
@@ -365,6 +383,7 @@ function iniciar() {
   sel.addEventListener("change", () => {
     uf = sel.value;
     ultimoVoto.clear();
+    ultimaGeracao = 0;
     if (grafico) { grafico.destroy(); grafico = null; }
     qs.set("uf", uf);
     history.replaceState(null, "", `?${qs}`);
