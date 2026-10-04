@@ -30,6 +30,14 @@ const preencher = (dir, base, u) => dir.replace(/<([^>]+)>/g, (m, nome) =>
 const urlResultado = (u) => `${preencher(ctx.dirDados, BASE, u)}/${u}-c${pad(CARGO, 4)}-e${pad(ctx.eleicao, 6)}-u.json`;
 // Candidatura a presidente é nacional, então a foto fica sempre na pasta "br".
 const urlFoto = (sqcand) => `${preencher(ctx.dirFotos, TSE, "br")}/${sqcand}.jpeg`;
+// Histórico compartilhado: gravado pelo coletor do GitHub Actions (coleta/) na branch "dados" deste repositório,
+// para o gráfico aparecer completo para quem abre a página depois.
+const REPO = (() => {
+  const dono = /^([\w-]+)\.github\.io$/i.exec(location.hostname)?.[1];
+  const nome = location.pathname.split("/").filter(Boolean)[0];
+  return dono && nome && !nome.includes(".") ? `${dono}/${nome}` : "Gedehamsen021/votos";
+})();
+const urlHistorico = (u) => `https://raw.githubusercontent.com/${REPO}/dados/historico/${ctx.eleicao}/${u}.json`;
 const urlApp = () => `${TSE}/oficial/app/index.html#/eleicao/${ctx.eleicao}/uf/${uf}/cargo/${CARGO}/vis/nominal/resultados`;
 
 const $ = (id) => document.getElementById(id);
@@ -51,6 +59,8 @@ if (!UFS.includes(uf)) uf = "br";
 let timer = null;
 let grafico = null;
 let ultimaGeracao = 0;        // horário (TSE) do arquivo mais novo já mostrado
+let ultimoDestaque = [];      // candidaturas com linha no gráfico
+let historicoBuscado = "", historicoEm = 0;
 const ultimoVoto = new Map();
 const SLOTS = ["--s1", "--s2", "--s3", "--s4"];
 const slotDe = new Map();     // id do candidato -> índice da cor (a cor segue o candidato, não a posição)
@@ -68,7 +78,7 @@ function lerHist() {
   return [...porP.values()].sort((a, b) => a.p - b.p);
 }
 function salvarHist(h) {
-  try { localStorage.setItem(chaveHist(), JSON.stringify(h.slice(-500))); } catch { /* sem storage */ }
+  try { localStorage.setItem(chaveHist(), JSON.stringify(h.slice(-2000))); } catch { /* sem storage */ }
 }
 
 // ---------- busca dos dados ----------
@@ -278,6 +288,7 @@ function render(d) {
     hist.sort((a, b) => a.p - b.p);
     salvarHist(hist);
   }
+  ultimoDestaque = destaque;
   desenharGrafico(hist, destaque);
   document.dispatchEvent(new CustomEvent("dados", { detail: d }));  // usado por compartilhar.js
 }
@@ -329,6 +340,22 @@ function desenharGrafico(hist, destaque) {
   });
 }
 
+// Junta o histórico gravado pelo coletor com o deste navegador (um ponto por % de seções, o mais novo vence).
+async function carregarHistoricoCompartilhado() {
+  try {
+    const r = await fetch(urlHistorico(uf), { cache: "no-cache" });
+    if (!r.ok) return;
+    const remoto = (await r.json()).pontos || [];
+    const porP = new Map(lerHist().map((h) => [h.p, h]));
+    for (const x of remoto) {
+      const atual = porP.get(x.p);
+      if (typeof x.p === "number" && x.v && (!atual || (x.t || 0) > (atual.t || 0))) porP.set(x.p, x);
+    }
+    salvarHist([...porP.values()].sort((a, b) => a.p - b.p));
+    if (ultimoDestaque.length) desenharGrafico(lerHist(), ultimoDestaque);
+  } catch { /* sem histórico compartilhado: segue só com o deste navegador */ }
+}
+
 function mostrarDiagnostico(log) {
   const box = $("diagnostico");
   if (!log) { box.hidden = true; return; }
@@ -363,6 +390,12 @@ async function atualizar() {
     if (!(d.geradoEm && d.geradoEm < ultimaGeracao)) {
       ultimaGeracao = Math.max(ultimaGeracao, d.geradoEm);
       render(d);
+    }
+    // histórico compartilhado: ao abrir, ao trocar de estado e a cada 5 minutos
+    const chave = `${ctx.eleicao}-${uf}`;
+    if (historicoBuscado !== chave || Date.now() - historicoEm > 300000) {
+      historicoBuscado = chave; historicoEm = Date.now();
+      carregarHistoricoCompartilhado();
     }
     mostrarDiagnostico(null);
     $("fonte").href = urlApp();

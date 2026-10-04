@@ -1,0 +1,54 @@
+# Grava o histórico da apuração na branch "dados" para o gráfico do site ficar completo
+# para quem abre a página depois. Começa sozinho quando este arquivo ou o coletor mudam,
+# a cada 30 minutos durante a noite da eleição (se não estiver rodando) ou manualmente em
+# Actions > "Coletar histórico da apuração" > Run workflow.
+name: Coletar histórico da apuração
+
+on:
+  push:
+    paths:
+      - .github/workflows/coleta.yml
+      - coleta/**
+  schedule:
+    - cron: "*/30 20-23 * 10 0"   # domingos de outubro, 17h–20h59 de Brasília
+    - cron: "*/30 0-3 * 10 1"     # e 21h–00h59 (já segunda-feira em UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: coleta-historico
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prepara a branch dados
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          remoto="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$remoto" dados > /dev/null; then
+            git clone --quiet --depth 1 --branch dados "$remoto" dados
+          else
+            mkdir dados
+            git -C dados init --quiet -b dados
+            git -C dados remote add origin "$remoto"
+          fi
+          git -C dados config user.name "github-actions[bot]"
+          git -C dados config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Coleta (até ~5h45)
+        env:
+          SAIDA: dados
+          PUBLICAR: "1"
+        run: node coleta/coletar.mjs
