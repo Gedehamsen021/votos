@@ -24,6 +24,12 @@ Também dá para abrir o `index.html` direto ou publicar em GitHub Pages; nesse 
 Recursos: destaques (líder, vantagem, % apurado), barra dos votos válidos com a marca de 50%, lista de candidatos,
 gráfico da evolução da apuração (Chart.js) e composição do eleitorado. Tema claro/escuro automático.
 
+**Mapa por estado:** cada estado aparece com a cor de quem lidera ali (mais forte = vantagem maior), atualizado
+sozinho a cada 30 s. Passando o mouse (ou tocando) aparece o resumo do estado; clicando, o site inteiro passa a
+mostrar aquele estado. Ao lado ficam quantos estados cada candidatura lidera, o resultado por região e o do exterior.
+Contornos dos estados: [MapSVG](https://mapsvg.com/maps/brazil), via [svg-maps](https://github.com/VictorCazanave/svg-maps)
+de Victor Cazanave, licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (`mapa-brasil.js`).
+
 **Compartilhar:** o botão no topo gera uma imagem 1200×675 (formato do X) com o resultado do momento, um texto
 pronto para o post (contando os 280 caracteres) e botões para postar no X, copiar ou baixar a imagem. Como o link
 de post do X só aceita texto, no celular o botão usa o compartilhamento do sistema (imagem + texto juntos) e no

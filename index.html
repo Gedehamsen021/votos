@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apuração 2026 ao vivo</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
 <body>
@@ -58,6 +58,41 @@
       <div class="legenda" id="legenda-corrida"></div>
     </section>
 
+    <!-- Mapa por estado -->
+    <section class="card" id="card-mapa">
+      <div class="card-cab">
+        <h2>Quem lidera em cada estado</h2>
+        <span class="muted pequeno" id="mapa-status">carregando estados…</span>
+      </div>
+      <div class="mapa-grade">
+        <div class="mapa-caixa" id="mapa-caixa">
+          <svg id="mapa" role="group" aria-label="Mapa do Brasil: cada estado com a cor de quem lidera ali"></svg>
+          <div id="mapa-dica" class="mapa-dica" hidden></div>
+        </div>
+        <div class="mapa-lado">
+          <p class="muted pequeno mapa-ajuda">Passe o mouse ou toque num estado para ver os números. Clique para abrir o estado em detalhe no topo da página.</p>
+          <ul id="mapa-legenda" class="mapa-legenda"></ul>
+          <div class="escala" aria-label="Quanto mais forte a cor, maior a vantagem do 1º colocado">
+            <span class="muted">Vantagem do 1º:</span>
+            <span><i class="v1"></i>até 5 p.p.</span><span><i class="v2"></i>5 a 15</span><span><i class="v3"></i>mais de 15</span>
+          </div>
+          <h3 class="mapa-sub">Por região</h3>
+          <div id="mapa-regioes" class="regioes"></div>
+          <p id="mapa-exterior" class="exterior" hidden></p>
+          <button type="button" id="mapa-brasil" class="botao" hidden>Voltar para o Brasil</button>
+        </div>
+      </div>
+      <details class="mapa-tabela">
+        <summary>Ver todos os estados em lista</summary>
+        <div class="tabela-rolagem">
+          <table>
+            <thead><tr><th>Estado</th><th>Lidera</th><th class="num">%</th><th class="num">Vantagem</th><th class="num">Apurado</th></tr></thead>
+            <tbody id="mapa-lista"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
     <div class="grade">
       <!-- Candidatos -->
       <section class="card">
@@ -93,6 +128,7 @@
 
   <footer class="muted pequeno">
     Fonte: <a id="fonte" target="_blank" rel="noopener">resultados.tse.jus.br</a> · Site não oficial.
+    · Mapa: <a href="https://mapsvg.com/maps/brazil" target="_blank" rel="noopener">MapSVG</a>, via <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">svg-maps</a> (<a href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank" rel="noopener">CC BY 4.0</a>)
   </footer>
 
   <dialog id="dlg-compartilhar" class="dlg" aria-labelledby="dlg-titulo">
@@ -121,6 +157,8 @@
   </dialog>
 
   <script src="app.js?v=8" defer></script>
-  <script src="compartilhar.js?v=7" defer></script>
+  <script src="compartilhar.js?v=8" defer></script>
+  <script src="mapa-brasil.js?v=8" defer></script>
+  <script src="mapa.js?v=8" defer></script>
 </body>
 </html>
